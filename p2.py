@@ -29,7 +29,11 @@ for comment in comments:
 
 # Sort the adjectives by frequency (most used first)
 sorted_adjectives = sorted(adjective_freq.items(), key=lambda x: x[1], reverse=True)
+<<<<<<< HEAD
 print(sorted_adjectives)
+=======
+
+>>>>>>> 0b163edd86024dd2ed02391e230d3d0e92b4e209
 # Extract the top N adjectives (you can adjust the number as needed)
 top_adjectives = [adj for adj, freq in sorted_adjectives[:10]]
 

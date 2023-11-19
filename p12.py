@@ -44,7 +44,7 @@ pipeline = [
 ]
 
 result = list(collection.aggregate(pipeline))
-print(result)
+
 
 # Insert data in bulk
 bulk_insert = []
@@ -57,34 +57,34 @@ for article in result:
             'keyword': keyword
         })
 
-if bulk_insert:
-    db["CA"].insert_many(bulk_insert)
+# if bulk_insert:
+#     db["CA"].insert_many(bulk_insert)
 
-# # Aggregate keywords for each year and calculate counts
-# mapper = Code("""
-#     function () {
-#         emit({ year: this.year, keyword: this.keyword }, 1);
-#     }
-# """)
-# reducer = Code("""
-#     function (key, values) {
-#         return Array.sum(values);
-#     }
-# """)
-# finalize = Code("""
-#     function (key, reducedVal) {
-#         var max = 0;
-#         var keyword = "";
-#         for (var i in reducedVal) {
-#             if (reducedVal[i] > max) {
-#                 max = reducedVal[i];
-#                 keyword = i;
-#             }
-#         }
-#         return { count: max, keyword: keyword };
-#     }
-# """)
-# result = db["CA"].map_reduce(mapper, reducer, "CA_reduce", finalize=finalize)
+# Aggregate keywords for each year and calculate counts
+mapper = Code("""
+    function () {
+        emit({ year: this.year, keyword: this.keyword }, 1);
+    }
+""")
+reducer = Code("""
+    function (key, values) {
+        return Array.sum(values);
+    }
+""")
+finalize = Code("""
+    function (key, reducedVal) {
+        var max = 0;
+        var keyword = "";
+        for (var i in reducedVal) {
+            if (reducedVal[i] > max) {
+                max = reducedVal[i];
+                keyword = i;
+            }
+        }
+        return { count: max, keyword: keyword };
+    }
+""")
+result = db["CA"].map_reduce(mapper, reducer, "CA_reduce", finalize=finalize)
 
 # Show max of each year
 pipeline = [
